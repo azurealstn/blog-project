@@ -13,7 +13,10 @@ public class UserApiController {
 
     private final UserService userService;
 
-    @PostMapping("/api/v1/user")
+    /**
+     * 회원가입 API
+     */
+    @PostMapping("/auth/api/v1/user")
     public Long save(@RequestBody UserSaveRequestDto userSaveRequestDto) {
         return userService.save(userSaveRequestDto.toEntity());
     }

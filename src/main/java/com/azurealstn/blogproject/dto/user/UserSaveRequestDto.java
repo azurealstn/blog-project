@@ -2,10 +2,7 @@ package com.azurealstn.blogproject.dto.user;
 
 import com.azurealstn.blogproject.domain.user.Role;
 import com.azurealstn.blogproject.domain.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @AllArgsConstructor

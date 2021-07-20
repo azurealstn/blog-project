@@ -13,7 +13,7 @@ body {
 
 .form-signin {
   width: 100%;
-  max-width: 330px;
+  max-width: 400px;
   padding: 15px;
   margin: auto;
 }
@@ -38,9 +38,8 @@ body {
   border-top-right-radius: 0;
 }
 
-.btn-primary {
-    background-color: #15751b;
-    border-color: #4caf50;
+.btn-success {
+    margin-bottom: 40px;
 }
 
 .fw-normal {
