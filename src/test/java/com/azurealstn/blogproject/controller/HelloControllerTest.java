@@ -1,9 +1,13 @@
 package com.azurealstn.blogproject.controller;
 
+import com.azurealstn.blogproject.config.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -12,13 +16,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = HelloController.class)
+@WebMvcTest(controllers = HelloController.class,
+    excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
+    }
+)
 public class HelloControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
     @Test
+    @WithMockUser
     public void hello_Test() throws Exception {
         String hello = "hello Spring Boot!";
 
@@ -28,6 +37,7 @@ public class HelloControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void helloDto_Test() throws Exception {
         String name = "minsu";
         String nickname = "babo";

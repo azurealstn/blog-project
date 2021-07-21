@@ -21,4 +21,12 @@ public class UserController {
     public String userLogin() {
         return "layout/user/user-login";
     }
+
+    /**
+     * 회원수정 페이지
+     */
+    @GetMapping("/user/update")
+    public String userUpdate() {
+        return "layout/user/user-update";
+    }
 }

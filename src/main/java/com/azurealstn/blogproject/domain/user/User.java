@@ -41,5 +41,11 @@ public class User {
         this.password = password;
     }
 
+    /**
+     * 권한 메소드
+     */
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
 }
 
