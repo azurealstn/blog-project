@@ -2,8 +2,9 @@
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
-    white-space: normal;
     overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
 }
 
 .a-title {
@@ -14,4 +15,13 @@
 .a-title:hover {
     color: #15751b;
     text-decoration: underline;
+}
+
+p {
+    word-break: break-all;
+    text-align: left;
+}
+
+h3 {
+    word-break: break-all;
 }
