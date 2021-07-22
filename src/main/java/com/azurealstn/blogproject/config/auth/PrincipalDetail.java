@@ -8,10 +8,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@RequiredArgsConstructor
 public class PrincipalDetail implements UserDetails {
 
-    private final User user;
+    private User user;
+
+    public PrincipalDetail(User user) {
+        this.user = user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -31,6 +38,21 @@ public class PrincipalDetail implements UserDetails {
     @Override
     public String getUsername() {
         return user.getUsername();
+    }
+
+    //사용자 이메일
+    public String getEmail() {
+        return user.getEmail();
+    }
+
+    //사용자 닉네임
+    public String getNickname() {
+        return user.getNickname();
+    }
+
+    //사용자 pk
+    public Long getId() {
+        return user.getId();
     }
 
     //계정이 만료되었는지 (true: 만료되지 않음)
