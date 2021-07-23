@@ -6,10 +6,11 @@ import com.azurealstn.blogproject.domain.user.User;
 import com.azurealstn.blogproject.dto.board.BoardSaveRequestDto;
 import com.azurealstn.blogproject.dto.board.BoardUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -30,8 +31,8 @@ public class BoardService {
      * 글목록 로직
      */
     @Transactional(readOnly = true)
-    public List<Board> findAll() {
-        return boardRepository.findAll();
+    public Page<Board> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable) {
+        return boardRepository.findByTitleContainingOrContentContaining(title, content, pageable);
     }
 
     /**
@@ -58,6 +59,14 @@ public class BoardService {
         Board board = boardRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 id가 없습니다. id=" + id));
         board.update(boardUpdateRequestDto.getTitle(), boardUpdateRequestDto.getContent());
         return id;
+    }
+
+    /**
+     * 글 조회수 로직
+     */
+    @Transactional
+    public int updateCount(Long id) {
+        return boardRepository.updateCount(id);
     }
 
 }

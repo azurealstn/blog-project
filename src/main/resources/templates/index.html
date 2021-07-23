@@ -6,7 +6,12 @@
 <body class="d-flex flex-column h-100">
 <header th:replace="layout/header :: header"></header>
 
-<!-- Begin page content -->
+<div class="d-flex" style="position: relative; top: 30px;"><h2 style="margin-right: 10px;">총 건수:</h2><h2 th:text="${boards.totalElements}"></h2></div>
+<form class="d-flex" style="position: relative; top: 40px;" method="get" th:action="@{/}">
+    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+           id="search" name="search" th:value="${param.search}">
+    <button class="btn btn-outline-success" type="submit">Search</button>
+</form>
 <main class="flex-shrink-0">
     <div class="container">
         <div class="p-2"></div>
@@ -22,6 +27,20 @@
         </div>
     </div>
 </main>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item" th:classappend="${1 == boards.pageable.pageNumber + 1} ? 'disabled' : '' ">
+            <a class="page-link" th:href="@{/(page=${boards.pageable.pageNumber - 1}, search=${param.search})}">Previous</a>
+        </li>
+        <li class="page-item" th:classappend="${i == boards.pageable.pageNumber + 1} ? 'active' : '' " th:each="i : ${#numbers.sequence(startPage, endPage)}">
+            <a class="page-link" th:href="@{/(page=${i - 1}, search=${param.search})}" th:text="${i}">1</a>
+        </li>
+        <li class="page-item" th:classappend="${boards.totalPages == boards.pageable.pageNumber + 1} ? 'disabled' : '' ">
+            <a class="page-link" th:href="@{/(page=${boards.pageable.pageNumber + 1}, search=${param.search})}">Next</a>
+        </li>
+    </ul>
+</nav>
 
 <footer th:replace="layout/footer :: footer"></footer>
 

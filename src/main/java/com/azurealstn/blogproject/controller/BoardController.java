@@ -13,17 +13,27 @@ public class BoardController {
 
     private final BoardService boardService;
 
+    /**
+     * 글작성 페이지
+     */
     @GetMapping("/board/save")
     public String save() {
         return "layout/board/board-save";
     }
 
+    /**
+     * 글상세 페이지
+     */
     @GetMapping("/board/{id}")
     public String detail(@PathVariable Long id, Model model) {
         model.addAttribute("board", boardService.detail(id));
+        boardService.updateCount(id);
         return "layout/board/board-detail";
     }
 
+    /**
+     * 글수정 페이지
+     */
     @GetMapping("/board/{id}/update")
     public String update(@PathVariable Long id, Model model) {
         model.addAttribute("board", boardService.detail(id));
