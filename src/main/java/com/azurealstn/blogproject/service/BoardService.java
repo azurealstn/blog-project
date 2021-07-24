@@ -2,6 +2,8 @@ package com.azurealstn.blogproject.service;
 
 import com.azurealstn.blogproject.domain.board.Board;
 import com.azurealstn.blogproject.domain.board.BoardRepository;
+import com.azurealstn.blogproject.domain.reply.Reply;
+import com.azurealstn.blogproject.domain.reply.ReplyRepository;
 import com.azurealstn.blogproject.domain.user.User;
 import com.azurealstn.blogproject.dto.board.BoardSaveRequestDto;
 import com.azurealstn.blogproject.dto.board.BoardUpdateRequestDto;

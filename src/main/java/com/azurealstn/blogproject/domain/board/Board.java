@@ -1,13 +1,16 @@
 package com.azurealstn.blogproject.domain.board;
 
 import com.azurealstn.blogproject.domain.BaseTimeEntity;
+import com.azurealstn.blogproject.domain.reply.Reply;
 import com.azurealstn.blogproject.domain.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Builder
@@ -32,6 +35,11 @@ public class Board extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     private User user;
+
+    @OrderBy("id desc")
+    @JsonIgnoreProperties({"board"})
+    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<Reply> replyList;
 
     public void update(String title, String content) {
         this.title = title;

@@ -5,11 +5,7 @@ import com.azurealstn.blogproject.domain.user.User;
 import com.azurealstn.blogproject.dto.user.UserSaveRequestDto;
 import com.azurealstn.blogproject.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor

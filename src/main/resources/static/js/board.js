@@ -70,6 +70,6 @@ let index = {
         }).fail(function (err) {
             alert(JSON.stringify(err));
         });
-    },
+    }
 }
 index.init();
