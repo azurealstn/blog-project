@@ -41,6 +41,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .loginPage("/auth/user/login")
                     .loginProcessingUrl("/auth/user/login")
                     .defaultSuccessUrl("/");
+
+        http
+                .rememberMe().tokenValiditySeconds(60 * 60 * 7)
+                .userDetailsService(principalDetailService);
     }
 
     @Bean
