@@ -47,6 +47,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(principalDetailService);
     }
 
+    /**
+     * 시큐리티 세션 빈으로 등록
+     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

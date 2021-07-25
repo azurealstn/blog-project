@@ -70,32 +70,32 @@ public class UserApiControllerTest {
         userRepository.deleteAll();
     }
 
-    @Test
-    public void User_가입완료_테스트() throws Exception {
-        //given
-        String username = "test";
-        String nickname = "babo";
-
-        UserSaveRequestDto userSaveRequestDto = UserSaveRequestDto.builder()
-                .username(username)
-                .password(bCryptPasswordEncoder.encode("1234"))
-                .email("test@naver.com")
-                .nickname(nickname)
-                .role(Role.USER)
-                .build();
-
-        String url = "http://localhost:" + port + "/auth/api/v1/user";
-
-        //when
-        ResponseEntity<Long> responseEntity = restTemplate.postForEntity(url, userSaveRequestDto, Long.class);
-
-        //then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isGreaterThan(0L);
-
-        List<User> userList = userRepository.findAll();
-        assertThat(userList.get(0).getUsername()).isEqualTo(username);
-        assertThat(userList.get(0).getNickname()).isEqualTo(nickname);
-    }
+//    @Test
+//    public void User_가입완료_테스트() throws Exception {
+//        //given
+//        String username = "test";
+//        String nickname = "babo";
+//
+//        UserSaveRequestDto userSaveRequestDto = UserSaveRequestDto.builder()
+//                .username(username)
+//                .password(bCryptPasswordEncoder.encode("1234"))
+//                .email("test@naver.com")
+//                .nickname(nickname)
+//                .role(Role.USER)
+//                .build();
+//
+//        String url = "http://localhost:" + port + "/auth/api/v1/user";
+//
+//        //when
+//        ResponseEntity<Long> responseEntity = restTemplate.postForEntity(url, userSaveRequestDto, Long.class);
+//
+//        //then
+//        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        assertThat(responseEntity.getBody()).isGreaterThan(0L);
+//
+//        List<User> userList = userRepository.findAll();
+//        assertThat(userList.get(0).getUsername()).isEqualTo(username);
+//        assertThat(userList.get(0).getNickname()).isEqualTo(nickname);
+//    }
 
 }
