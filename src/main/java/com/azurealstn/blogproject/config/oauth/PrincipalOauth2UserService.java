@@ -1,6 +1,9 @@
 package com.azurealstn.blogproject.config.oauth;
 
 import com.azurealstn.blogproject.config.auth.PrincipalDetail;
+import com.azurealstn.blogproject.config.oauth.provider.FacebookUserInfo;
+import com.azurealstn.blogproject.config.oauth.provider.GoogleUserInfo;
+import com.azurealstn.blogproject.config.oauth.provider.OAuth2UserInfo;
 import com.azurealstn.blogproject.domain.user.Role;
 import com.azurealstn.blogproject.domain.user.User;
 import com.azurealstn.blogproject.domain.user.UserRepository;
@@ -26,13 +29,20 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
+        OAuth2UserInfo oAuth2UserInfo = null;
 
-        String provider = userRequest.getClientRegistration().getRegistrationId(); //google
-        String providerId = oAuth2User.getAttribute("sub");
+        if (userRequest.getClientRegistration().getRegistrationId().equals("google")) {
+            oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+        } else if (userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
+            oAuth2UserInfo = new FacebookUserInfo(oAuth2User.getAttributes());
+        }
+
+        String provider = oAuth2UserInfo.getProvider();
+        String providerId = oAuth2UserInfo.getProviderId();
         String username = provider + "_" + providerId;
         String password = UUID.randomUUID().toString();
         String email = oAuth2User.getAttribute("email");
-        String nickname = "아무거나";
+        String nickname = "소셜 로그인";
         Role role = Role.USER;
 
         Optional<User> userEntity = userRepository.findByUsername(username);
