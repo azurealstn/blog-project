@@ -2,6 +2,7 @@ package com.azurealstn.blogproject.config;
 
 
 import com.azurealstn.blogproject.config.auth.PrincipalDetailService;
+import com.azurealstn.blogproject.config.oauth.PrincipalOauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalDetailService principalDetailService;
+    private final PrincipalOauth2UserService principalOauth2UserService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -39,8 +41,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .formLogin()
                     .loginPage("/auth/user/login")
-                    .loginProcessingUrl("/auth/user/login")
-                    .defaultSuccessUrl("/");
+                    .loginProcessingUrl("/auth/api/v1/user/login")
+                    .defaultSuccessUrl("/")
+                .and()
+                    .oauth2Login()
+                    .loginPage("/auth/user/login")
+                    .userInfoEndpoint()
+                    .userService(principalOauth2UserService);
 
         http
                 .rememberMe().tokenValiditySeconds(60 * 60 * 7)

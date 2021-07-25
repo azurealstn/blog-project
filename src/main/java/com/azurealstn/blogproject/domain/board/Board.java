@@ -30,6 +30,7 @@ public class Board extends BaseTimeEntity {
     @Lob
     private String content;
 
+    @Column
     private int count; //조회수
 
     @ManyToOne(fetch = FetchType.EAGER)

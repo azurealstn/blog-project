@@ -1,15 +1,10 @@
 package com.azurealstn.blogproject.controller;
 
-import com.azurealstn.blogproject.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@RequiredArgsConstructor
 @Controller
 public class UserController {
-
-    private final UserService userService;
 
     /**
      * 회원가입 페이지

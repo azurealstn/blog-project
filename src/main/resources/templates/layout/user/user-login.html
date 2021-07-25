@@ -8,7 +8,7 @@
 
 <main class="form-signin">
     <div class="container border rounded flex-md-row mb-4 shadow-sm h-md-250">
-        <form action="/auth/user/login" method="post">
+        <form action="/auth/api/v1/user/login" method="post">
             <h1 class="h3 m-3 fw-normal">로그인</h1>
             <div th:if="${param.error}" class="alert alert-danger" role="alert">
                 아이디 혹은 비밀번호가 잘못 입력되었습니다.
@@ -30,7 +30,9 @@
             </div>
             <button class="w-100 btn btn-lg btn-success" id="btn-login">로그인</button>
         </form>
-
+        <div style="margin: 20px 0;">
+            <a href="/oauth2/authorization/google" class="btn btn-primary" role="button">구글 로그인</a>
+        </div>
     </div>
 </main>
 

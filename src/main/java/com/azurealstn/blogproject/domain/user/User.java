@@ -19,7 +19,7 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //sequence, auto_increment
 
-    @Column(nullable = false, length = 20, unique = true)
+    @Column(nullable = false, length = 50, unique = true)
     private String username; //아이디
 
     @Column(nullable = false, length = 100)
@@ -34,6 +34,12 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Column
+    private String provider;
+
+    @Column
+    private String providerId;
 
     /**
      * 비밀번호 암호화 메소드
