@@ -3,6 +3,7 @@ package com.azurealstn.blogproject.config.oauth;
 import com.azurealstn.blogproject.config.auth.PrincipalDetail;
 import com.azurealstn.blogproject.config.oauth.provider.FacebookUserInfo;
 import com.azurealstn.blogproject.config.oauth.provider.GoogleUserInfo;
+import com.azurealstn.blogproject.config.oauth.provider.NaverUserInfo;
 import com.azurealstn.blogproject.config.oauth.provider.OAuth2UserInfo;
 import com.azurealstn.blogproject.domain.user.Role;
 import com.azurealstn.blogproject.domain.user.User;
@@ -16,6 +17,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,42 +31,46 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
+
+
+        return processOAuth2User(userRequest, oAuth2User);
+    }
+
+    private OAuth2User processOAuth2User(OAuth2UserRequest userRequest, OAuth2User oAuth2User) {
         OAuth2UserInfo oAuth2UserInfo = null;
+
 
         if (userRequest.getClientRegistration().getRegistrationId().equals("google")) {
             oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
         } else if (userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
             oAuth2UserInfo = new FacebookUserInfo(oAuth2User.getAttributes());
+        } else if (userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
+            oAuth2UserInfo = new NaverUserInfo((Map) oAuth2User.getAttributes().get("response"));
         }
 
-        String provider = oAuth2UserInfo.getProvider();
-        String providerId = oAuth2UserInfo.getProviderId();
-        String username = provider + "_" + providerId;
-        String password = UUID.randomUUID().toString();
-        String email = oAuth2User.getAttribute("email");
-        String nickname = "소셜 로그인";
-        Role role = Role.USER;
-
-        Optional<User> userEntity = userRepository.findByUsername(username);
+        Optional<User> userOptional = userRepository.findByProviderAndProviderId(oAuth2UserInfo.getProvider(), oAuth2UserInfo.getProviderId());
 
         User user;
-        if (userEntity.isPresent()) {
-            user = userEntity.get();
+
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+            user.setEmail(oAuth2UserInfo.getEmail());
+            userRepository.save(user);
         } else {
             user = User.builder()
-                    .username(username)
-                    .password(password)
-                    .email(email)
-                    .nickname(nickname)
-                    .role(role)
-                    .provider(provider)
-                    .providerId(providerId)
+                    .username(oAuth2UserInfo.getProvider() + "_" + oAuth2UserInfo.getProviderId())
+                    .password(UUID.randomUUID().toString())
+                    .email(oAuth2UserInfo.getEmail())
+                    .nickname("소셜로그인")
+                    .role(Role.USER)
+                    .provider(oAuth2UserInfo.getProvider())
+                    .providerId(oAuth2UserInfo.getProviderId())
                     .build();
 
             userRepository.save(user);
-
         }
 
         return new PrincipalDetail(user, oAuth2User.getAttributes());
+
     }
 }

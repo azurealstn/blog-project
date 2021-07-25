@@ -1,6 +1,9 @@
 package com.azurealstn.blogproject.controller;
 
+import com.azurealstn.blogproject.config.auth.PrincipalDetail;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
@@ -26,7 +29,8 @@ public class UserController {
      * 회원수정 페이지
      */
     @GetMapping("/user/update")
-    public String userUpdate() {
+    public String userUpdate(@AuthenticationPrincipal PrincipalDetail principalDetail, Model model) {
+        model.addAttribute("principal", principalDetail.getUser());
         return "layout/user/user-update";
     }
 }

@@ -25,7 +25,7 @@
 
             <div class="form-floating m-3">
                 <input type="password" class="form-control" id="password" placeholder="패스워드를 입력하세요." required
-                       minlength="8" size="20">
+                       minlength="8" size="20" th:attrappend="disabled=${principal.provider ==  null} ? '' : 'disabled'">
                 <label for="password">패스워드</label>
                 <div class="valid-feedback">
                     very good!
