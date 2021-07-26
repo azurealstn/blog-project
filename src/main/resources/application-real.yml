@@ -1,6 +1,0 @@
-spring:
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://myblog.crzrchmfwtvq.ap-northeast-2.rds.amazonaws.com:3306/myblog?serverTimezone=Asia/Seoul
-    username: azure
-    password: azure1234
