@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: none
+      use-new-id-generate-mappings: false
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+  thymeleaf:
+    cache: false
+
+  profiles:
+    include: oauth, real-db

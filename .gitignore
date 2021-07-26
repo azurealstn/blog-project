@@ -18,7 +18,6 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-application-real.yml
 application-oauth.yml
 .idea
 *.iws
