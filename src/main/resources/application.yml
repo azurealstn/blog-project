@@ -1,21 +1,16 @@
 spring:
-  datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3308/myblog?serverTimezone=Asia/Seoul
-    username: azure
-    password: azure1234
-
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       use-new-id-generate-mappings: false
     show-sql: true
     properties:
       hibernate.format_sql: true
+      hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
   thymeleaf:
     cache: false
 
   profiles:
-    include: oauth
+    include: oauth, real
