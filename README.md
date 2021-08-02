@@ -54,10 +54,9 @@
 
 ```java
 컨트롤러단
-@GetMapping("/board/{id}/update")
-public String update(@PathVariable Long id, Model model) {
-    model.addAttribute("board", boardService.detail(id));
-    return "layout/board/board-update";
+@PutMapping("/api/v1/board/{id}")
+public Long update(@PathVariable Long id, @RequestBody BoardUpdateRequestDto boardUpdateRequestDto) {
+    return boardService.update(id, boardUpdateRequestDto);
 }
 
 서비스단
@@ -166,7 +165,7 @@ public class Board extends BaseTimeEntity {
 - private List\<Reply> replyList;
 	- @OrderBy("id desc") : 댓글 작성시 최근 댓글이 위로 올라오도록 설정합니다.
 	- @JsonIgnoreProperties({"board"}) : Board를 조회하게 되면 Reply 객체를 조회하게 되는데 이 때 Reply 엔티티에는 또 Board 객체를 조회하게 됩니다. 이러면 무한 반복이 일어나기 때문에 한번만 조회하게 설정할 수 있게 @JsonIgnoreProperties를 사용합니다.
-	- mappedBy : DB에는 하나의 raw 데이터에는 하나의 값만 허용되기 때문에 `List`로 DB에 값을 저장할 수 없습니다. 그래서 실제로 조회만 할 수 있도록 mappedBy를 설정합니다.
+	- mappedBy : DB에는 하나의 row 데이터에는 하나의 값만 허용되기 때문에 `List`로 DB에 값을 저장할 수 없습니다. 그래서 실제로 조회만 할 수 있도록 mappedBy를 설정합니다.
 	- Reply 테이블에는 외래키가 잡혀있어서 실제로 삭제가 동작안하는 문제가 발생하는데 이 때 `cascade = CascadeType.REMOVE)` 옵션을 주면 외래키가 있어도 삭제가 완료됩니다.
 
 <br/>
@@ -204,11 +203,11 @@ public class Reply extends BaseTimeEntity {
 ### 자신만 수정, 삭제 가능하도록 설정
 
 - implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5' 의존성을 다운받으면
-	- th:value="${#authentication.principal.email}" 이런식으로 사용자 정보를 받을 수 있습니다.
+	- th:value="${#authentication.principal.email}" 이런식으로 사용자 정보를 뷰에 뿌려줄 수 있습니다.
 - 본인이 작성한 게시글 혹은 댓글에 대한 수정, 삭제만 가능하도록 설정하였습니다.
 
 ```html
-게시글 수정, 삭제
+게시글 수정, 삭제 (DB에 있는 유저 id와 로그인한 유저 id 비교)
 <span th:if="${board.user.id == #authentication.principal.id}">
     <a th:href="@{/board/{id}/update(id=${board.id})}" class="btn btn-warning" id="btn-update">수정</a>
     <button class="btn btn-danger" id="btn-delete">삭제</button>
@@ -216,7 +215,7 @@ public class Reply extends BaseTimeEntity {
 ```
 
 ```html
-댓글 삭제
+댓글 삭제 (DB에 있는 유저 id와 로그인한 유저 id 비교)
 <span th:if="${reply.user.id == #authentication.principal.id}">
     <button th:onclick="|replyIndex.replyDelete('${board.id}', '${reply.id}')|" class="badge btn-danger" style="margin-left: 10px;">삭제</button>
 </span>
@@ -228,12 +227,15 @@ public class Reply extends BaseTimeEntity {
 
 ### 로그인
 
-- 로그인은 Spring Security를 이용하여 `UserDetails 인터페이스`를 상속받아 구현하였습니다.
+- 로그인은 Spring Security를 이용하여 시큐리티가 대신 로그인을 수행할 수 있도록 하고 유저 정보는 `UserDetails 인터페이스`를 상속받아 구현하였습니다.
+	- `user-login.html`의 form 태그에 `action`과 `method`에 post로 설정합니다.
+	- input 태그에는 `name` 값을 줍니다.
 - 실제 로그인한 유저는 `UserDetails`를 상속받은 `PrincipalDetail` 클래스에 사용자 정보가 담겨 있고, 사용자 정보를 가져오는 `UserDetailsService 인터페이스`를 상속받은 `PrincipalDetailService` 클래스를 생성하였습니다.
 - 회원 수정의 경우 변경 완료시킨 후 다시 회원 수정으로 들어갔을 때 바껴야하므로 이 때 스프링 시큐리티 세션을 이용하여 반영하였습니다.
 	- AuthenticationManager를 오버라이딩하여 Bean으로 등록해서 회원수정 로직에서 setter를 통해 변경시켰습니다.
 
 ```java
+SecurityConfig 클래스
 @Bean
 @Override
 public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -241,7 +243,13 @@ public AuthenticationManager authenticationManagerBean() throws Exception {
 }
 
 //변경 - 더티체킹
-principalDetail.setUser(userEntity);
+@Transactional
+public Long update(User user, @AuthenticationPrincipal PrincipalDetail principalDetail) {
+    User userEntity = userRepository.findById(user.getId()).orElseThrow(() -> new IllegalArgumentException("해당 회원이 없습니다. id=" + user.getId()));
+    userEntity.update(bCryptPasswordEncoder.encode(user.getPassword()), user.getNickname());
+    principalDetail.setUser(userEntity); //시큐리티 세션 정보 변경
+    return userEntity.getId();
+}
 ```
 
 <br/>
@@ -253,6 +261,27 @@ principalDetail.setUser(userEntity);
 - 소셜로그인은 `oauth2-client` 라이브러리를 이용하여 구현하였습니다.
 - 소셜로그인을 할 때도 `UserDatils`를 구현한 `PrincipalDetail`의 사용자 정보를 가져오기 위해 `OAuth2User 인터페이스`를 상속받도록 합니다.
 	- `DefaultOAuth2UserService 클래스`를 상속받은 `PrincipalOauth2UserService 클래스`가 `PrincipalDetail`를 반환해서 소셜로그인을 한 사람도 사용자 정보를 받을 수 있도록 합니다.
+- 자동회원가입
+
+```java
+if (userOptional.isPresent()) { //이미 소셜로그인이 되어있는 유저라면 email을 update해줍니다.
+    user = userOptional.get();
+    user.setEmail(oAuth2UserInfo.getEmail());
+    userRepository.save(user);
+} else { //소셜로그인 정보가 없는 유저라면 회원가입을 자동으로 시켜줍니다.
+    user = User.builder()
+            .username(oAuth2UserInfo.getProvider() + "_" + oAuth2UserInfo.getProviderId())
+            .password(UUID.randomUUID().toString())
+            .email(oAuth2UserInfo.getEmail())
+            .nickname("소셜로그인")
+            .role(Role.USER)
+            .provider(oAuth2UserInfo.getProvider())
+            .providerId(oAuth2UserInfo.getProviderId())
+            .build();
+
+    userRepository.save(user);
+}
+```
 
 <br/>
 <br/>
@@ -308,7 +337,7 @@ public class IndexController {
 
 - th:classappend를 이용하여 조건을 달아서 조건에 맞으면 클래스에 추가되도록 합니다.
 - ${#numbers.sequence(startPage, endPage)}"을 이용하면 startPage부터 endPage까지 숫자범위를 설정합니다.
-- 다른 페이지로 이동하게 되면 검색한 것이 초기화가 되는데 이 때 검색 파라미터를 페이지 이동할 때 까지 들고 갈 수 있도록 설정했습니다.
+- 다른 페이지로 이동하게 되면 검색한 것이 초기화가 되는데 이 때 검색 파라미터를 페이지 이동할 때 까지 들고 갈 수 있도록 `th:href` url에 search 쿼리 파라미터를 추가하였습니다.
 - 아래 코드는 검색 html입니다.
 
 ```html
