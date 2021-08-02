@@ -261,7 +261,21 @@ public Long update(User user, @AuthenticationPrincipal PrincipalDetail principal
 - 소셜로그인은 `oauth2-client` 라이브러리를 이용하여 구현하였습니다.
 - 소셜로그인을 할 때도 `UserDatils`를 구현한 `PrincipalDetail`의 사용자 정보를 가져오기 위해 `OAuth2User 인터페이스`를 상속받도록 합니다.
 	- `DefaultOAuth2UserService 클래스`를 상속받은 `PrincipalOauth2UserService 클래스`가 `PrincipalDetail`를 반환해서 소셜로그인을 한 사람도 사용자 정보를 받을 수 있도록 합니다.
-- 자동회원가입
+- `OAuth2UserInfo 인터페이스`를 만들어서 각각 구글, 페이스북, 네이버의 `attributes` 값을 받았습니다.
+
+```java
+if (userRequest.getClientRegistration().getRegistrationId().equals("google")) {
+    oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
+} else if (userRequest.getClientRegistration().getRegistrationId().equals("facebook")) {
+    oAuth2UserInfo = new FacebookUserInfo(oAuth2User.getAttributes());
+} else if (userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
+    oAuth2UserInfo = new NaverUserInfo((Map) oAuth2User.getAttributes().get("response"));
+}
+```
+
+<br/>
+
+- 자동회원가입 로직
 
 ```java
 if (userOptional.isPresent()) { //이미 소셜로그인이 되어있는 유저라면 email을 update해줍니다.
