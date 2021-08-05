@@ -232,15 +232,9 @@ public class Reply extends BaseTimeEntity {
 	- input 태그에는 `name` 값을 줍니다.
 - 실제 로그인한 유저는 `UserDetails`를 상속받은 `PrincipalDetail` 클래스에 사용자 정보가 담겨 있고, 사용자 정보를 가져오는 `UserDetailsService 인터페이스`를 상속받은 `PrincipalDetailService` 클래스를 생성하였습니다.
 - 회원 수정의 경우 변경 완료시킨 후 다시 회원 수정으로 들어갔을 때 바껴야하므로 이 때 스프링 시큐리티 세션을 이용하여 반영하였습니다.
-	- AuthenticationManager를 오버라이딩하여 Bean으로 등록해서 회원수정 로직에서 setter를 통해 변경시켰습니다.
+	- @AuthenticationPrincipal에서 회원정보를 파라미터로 받고 회원수정 로직에서 setter를 통해 변경시켰습니다.
 
 ```java
-SecurityConfig 클래스
-@Bean
-@Override
-public AuthenticationManager authenticationManagerBean() throws Exception {
-    return super.authenticationManagerBean();
-}
 
 //변경 - 더티체킹
 @Transactional
