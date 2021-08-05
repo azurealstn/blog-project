@@ -222,6 +222,16 @@ public class Reply extends BaseTimeEntity {
 ```
 
 <br/>
+
+- 회원수정을 할 때도 소셜로그인을 한 사람에게는 패스워드를 수정하지 못하도록 하였습니다.
+
+```java
+<input type="password" class="form-control" id="password" placeholder="패스워드를 입력하세요." required minlength="8" size="20"
+    th:attrappend="disabled=${principal.provider ==  null} ? '' : 'disabled'">
+<label for="password">패스워드</label>
+```
+
+<br/>
 <br/>
 <br/>
 
